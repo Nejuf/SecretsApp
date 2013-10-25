@@ -16,4 +16,7 @@ class Friendship < ActiveRecord::Base
     results.count == 0
   end
 
+  def self.can_unfriend?(out_friend_id, in_friend_id)
+    !can_friend?(out_friend_id, in_friend_id);
+  end
 end

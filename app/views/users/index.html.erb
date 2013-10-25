@@ -1,33 +1,59 @@
 <% @users.each do |user| %>
+<% next if user == current_user %>
 	<%= user.username %>
-	<% if user != current_user && Friendship.can_friend?(current_user.id, user.id) %>
-	<%= button_to "Friend",
-			user_friendship_url(user.id),
-			method: :post,
-			form_class: "friend",
-			form: { "data-user-id" => user.id} %>
+	<div class="friend-buttons <%= current_user.friends.include?(user) ? "can-unfriend" : "can-friend"%>">
+			<%= button_to "Friend",
+					user_friendship_url(user.id),
+					method: :post,
+					form_class: "friend",
+					form: { "data-user-id" => user.id} %>
 
-		<!-- <%#= render "friendships/form", user: user%> -->
-
-
-	<% end %>
+				<%= button_to "Unfriend",
+						user_friendship_url(user.id),
+						method: :delete,
+						form_class: "unfriend",
+						form: { "data-user-id" => user.id} %>
+	</div>
 	<br>
 <% end %>
 
 <script>
 	$('.friend').on('click', function(event) {
 		event.preventDefault();
-		$(event.target).attr("disabled", true);
-		$(event.target).val("Friending...")
+		// $(event.target).attr("disabled", true);
+// 		$(event.target).val("Friending...");
+
 		$.ajax( {
 			type: "POST",
 			url: "/users/" + $(event.currentTarget).data("user-id") +"/friendship",
 			success: function() {
-				$(event.currentTarget).remove();
+				//$(event.currentTarget).remove();
+				toggleFriendButtons(event.currentTarget);
 			}
 		});
 
 	})
+
+	$('.unfriend').on('click', function(event) {
+		event.preventDefault();
+		// $(event.target).attr("disabled", true);
+// 		$(event.target).val("Unfriending...");
+
+		$.ajax( {
+			type: "DELETE",
+			url: "/users/" + $(event.currentTarget).data("user-id") +"/friendship",
+			success: function() {
+				//$(event.currentTarget).remove();
+				toggleFriendButtons(event.currentTarget);
+			}
+		});
+
+	})
+
+	var toggleFriendButtons = function(form){
+		$('div.friend-buttons').has(form).toggleClass("can-unfriend");
+		$('div.friend-buttons').has(form).toggleClass("can-friend");
+	}
 </script>
 
 
