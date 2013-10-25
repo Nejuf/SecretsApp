@@ -9,4 +9,11 @@ class Friendship < ActiveRecord::Base
   class_name: "User",
   foreign_key: :in_friend_id
 
+  def self.can_friend?(out_friend_id, in_friend_id)
+    results = Friendship.where("out_friend_id = ? AND in_friend_id = ?",
+                        out_friend_id,
+                        in_friend_id)
+    results.count == 0
+  end
+
 end

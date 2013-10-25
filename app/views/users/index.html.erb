@@ -1,8 +1,33 @@
 <% @users.each do |user| %>
 	<%= user.username %>
-	<% if user != current_user && current_user.is_friend?(user) %>
-	<%= render "friendships/form", user: user%>
+	<% if user != current_user && Friendship.can_friend?(current_user.id, user.id) %>
+	<%= button_to "Friend",
+			user_friendship_url(user.id),
+			method: :post,
+			form_class: "friend",
+			form: { "data-user-id" => user.id} %>
 
+		<!-- <%#= render "friendships/form", user: user%> -->
+
+
+	<% end %>
+	<br>
 <% end %>
+
+<script>
+	$('.friend').on('click', function(event) {
+		event.preventDefault();
+		$(event.target).attr("disabled", true);
+		$(event.target).val("Friending...")
+		$.ajax( {
+			type: "POST",
+			url: "/users/" + $(event.currentTarget).data("user-id") +"/friendship",
+			success: function() {
+				$(event.currentTarget).remove();
+			}
+		});
+
+	})
+</script>
 
 
