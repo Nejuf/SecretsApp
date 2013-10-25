@@ -1,0 +1,8 @@
+<% @users.each do |user| %>
+	<%= user.username %>
+	<% if user != current_user && current_user.is_friend?(user) %>
+	<%= render "friendships/form", user: user%>
+
+<% end %>
+
+

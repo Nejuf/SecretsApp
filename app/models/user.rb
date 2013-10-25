@@ -14,6 +14,9 @@ class User < ActiveRecord::Base
     :foreign_key => :recipient_id
   )
 
+  has_many(:friendships, foreign_key: :out_friend_id)
+  has_many(:friends, through: :friendships, source: :in_friend)
+
   validates :password_digest, :presence => { :message => "Password can't be blank" }
   validates :password, :length => { :minimum => 6, :allow_nil => true }
   validates :session_token, :presence => true
