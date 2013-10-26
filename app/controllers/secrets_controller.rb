@@ -1,18 +1,16 @@
 class SecretsController < ApplicationController
 
-  def new
-
-    render :new
-  end
-
   def create
+
     @secret = Secret.new(params[:secret])
     @secret.author_id = current_user.id
 
     if @secret.save
-      redirect_to user_url(@secret.recipient)
+      #redirect_to user_url(@secret.recipient)
+      render json: @secret
     else
-      render :json => @secret.errors
+      head 406
+      # render :json => @secret.errors
     end
   end
 
